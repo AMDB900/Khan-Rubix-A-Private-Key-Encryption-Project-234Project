@@ -26,6 +26,16 @@ def get_key():
 
     return filename
 
+def  binary_to_hex(data):
+    # Binary string to bytes object
+    num_bits = len(data)
+    num_hex_digits = (num_bits + 3) // 4
+    return num_bits.to_bytes(4, byteorder='little') + hex(int(data, 2))[2:].zfill(num_hex_digits).encode()
+
+def hex_to_binary(data):
+    # Bytes object to binary string
+    return bin(int(data[4:].decode(), 16))[2:].zfill(int.from_bytes(data[0:4], byteorder='little'))
+
 if __name__ == "__main__":
 
     pi_digits = read_pi_digits('pi_10000_digits.txt')
@@ -33,12 +43,11 @@ if __name__ == "__main__":
 
     ## XOR with HuffmanEncoding
     print("Select a file to encrypt:")
-    content, file_name = get_file()
-    data = pad_file(content, file_name)
+    content, filename = get_file()
+    data = pad_file(content, filename)
     print("\nSelect a key file:")
     key = load_and_pad_key_from_file(get_key(), pi_digits)
 
-    # print("Original:", data)
     print("Padded size:", len(data))
     print()
 
@@ -61,23 +70,37 @@ if __name__ == "__main__":
 
     huffman_time = end_time - start_time
     print(f"finished in {huffman_time:7.4f} seconds")
+
     encryption_time = huffman_time + fxor_time
     print(f"Total encryption time ------- {encryption_time:7.4f} seconds")
 
-    # print("\nEncrypted:", encoded_data)
-    print("Encrypted size:", len(encoded_data))
-    encoded_bytes = hex(int(encoded_data, 2)).encode()[2:]
-    
+    #print("\nEncrypted:", encoded_data.encode())
+
+    # Binary string to bytes
+    encoded_bytes = binary_to_hex(encoded_data)
+
+    print("Encrypted size:", len(encoded_bytes))
+    print(byte_frequency_analysis(encoded_bytes))
+    print()
+
     with open("text.khn", "wb") as file:
        file.write(encoded_bytes)
-    # with open("XOR.txt", "w") as file:
-    #   file.write(str(encrypted))
+
+
+    ###############################
+    ## RUBIK's SHUFFLE ALGORITHM ##
+    ##        GOES HERE          ##
+    ###############################
+
+
+    # Byte object to binary string
+    decoded_bytes = hex_to_binary(encoded_bytes)
 
     # Perform Huffman decoding
     print("\nHuffman decode... ", end="")
 
     start_time = time.perf_counter()
-    decoded_data = huffman_decode(encoded_data, tree)
+    decoded_data = huffman_decode(decoded_bytes, tree)
     end_time = time.perf_counter()
 
     decode_time = end_time - start_time
