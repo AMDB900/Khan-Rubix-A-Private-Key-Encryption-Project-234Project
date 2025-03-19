@@ -33,14 +33,13 @@ if __name__ == "__main__":
 
     ## XOR with HuffmanEncoding
     print("Select a file to encrypt:")
-    data = get_file()
+    content, file_name = get_file()
+    data = pad_file(content, file_name)
     print("\nSelect a key file:")
     key = load_and_pad_key_from_file(get_key(), pi_digits)
 
-    string_data = data.decode('utf-8', errors='ignore')
-
     # print("Original:", data)
-    print("Original size:", len(data))
+    print("Padded size:", len(data))
     print()
 
     # XOR the key against the file in 1KB chunks
@@ -67,9 +66,10 @@ if __name__ == "__main__":
 
     # print("\nEncrypted:", encoded_data)
     print("Encrypted size:", len(encoded_data))
-
-    # with open("text.khn", "w") as file:
-    #   file.write(encoded_data)
+    encoded_bytes = hex(int(encoded_data, 2)).encode()[2:]
+    
+    with open("text.khn", "wb") as file:
+       file.write(encoded_bytes)
     # with open("XOR.txt", "w") as file:
     #   file.write(str(encrypted))
 

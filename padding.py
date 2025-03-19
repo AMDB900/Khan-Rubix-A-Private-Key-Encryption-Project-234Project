@@ -47,17 +47,9 @@ def load_and_pad_key_from_file(file_path, pi_digits, target_length=1024):
     
     return pad_key_with_pi(key, pi_digits, target_length)
 
-def pad_file(input_file_path, seed=12345):
+def pad_file(file_content, input_file_path, seed=12345):
     # Read the content of the input file
-    print(f"\nLoading {input_file_path} ...", end='')
-    start = time.perf_counter()
-    
-    with open(input_file_path, 'rb') as file:
-        file_content = file.read()
-        
-    end = time.perf_counter()
-    print(f" {end - start:.4f} seconds")
-    
+
     if len(file_content) > (12 * 1024 * 1024): # 12 MB
         print(f"Error: File size is {len(file_content)}B. File must be less than {12 * 1024 * 1024}B in size.")
         exit()
@@ -70,6 +62,7 @@ def pad_file(input_file_path, seed=12345):
     
     # Get the file suffix (file extension)
     file_suffix = os.path.splitext(input_file_path)[1].encode('utf-8')  # Ensure it's a byte string
+    print(file_suffix)
     while len(file_suffix) < 5: # Pad the extension to 5 bytes (covers .docx)
         file_suffix = file_suffix + b'0'
         
@@ -106,7 +99,7 @@ def return_original_file(content):
     # Gather file data based on length of the string
     data = content[9:9 + length]
 
-    text = "output" + suffix.decode()
+    text = "output" + suffix.decode('utf-8', errors="ignore")
     with open(text, "wb") as file:
         file.write(data)
     
