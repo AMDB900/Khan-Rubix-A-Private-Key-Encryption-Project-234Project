@@ -31,10 +31,21 @@ def pad_key_with_pi(key, pi_digits, target_length=1024):
     # Pad the key with digits from pi, wrapping around if necessary
     padding_needed = target_length - len(key)
     if padding_needed > 0:
-        # Get the relevant digits of pi for padding
-        padding_string = (pi_digits * ((padding_needed // len(pi_digits)) + 1))[start_index:start_index + padding_needed]
-        padding_bytes = padding_string.encode('utf-8')  # Convert padding to bytes
-        key += padding_bytes  # Append padding to the key
+        # Create a list to hold the padding
+        padding = []
+        
+        # Start adding digits from pi starting at the calculated index
+        current_index = start_index
+        for _ in range(padding_needed):
+            padding.append(pi_digits[current_index])  # Add the current digit to the padding list
+            current_index = (current_index + 1) % len(pi_digits)  # Move to the next index, wrapping around if needed
+
+        # Convert the list of digits into a string, then encode as bytes
+        padding_string = ''.join(padding)
+        padding_bytes = padding_string.encode('utf-8')
+
+        # Append the padding to the key
+        key += padding_bytes
 
     elif padding_needed < 0:
         key = key[:target_length]  # Truncate the key if it's too long
@@ -109,7 +120,7 @@ if __name__ == "__main__":
     
     # pad_key_with_pi example usage:
     pi_digits = read_pi_digits('pi_10000_digits.txt')  # Load the pi digits from a file
-    key = "my secret key"  # Example key
+    key = "mmmmmmmmmmmmmmmmmy secret key"  # Example key
     padded_key = pad_key_with_pi(key, pi_digits)
     print(padded_key.hex())
     print(len(padded_key))  # This should print 1024 if the padding is correct
@@ -119,6 +130,7 @@ if __name__ == "__main__":
     print(file_key.hex())
     print(len(file_key))  # Should print 1024 if the padding is correct
 
+    """
     # Example usage for 
     input_file_path = 'test_input/1.docx'  # Replace with your file path
     linear_array = pad_file(input_file_path)
@@ -126,4 +138,5 @@ if __name__ == "__main__":
     # Output file should be 16MB with the data as described
 
     print(f"Linear array created with size: {len(linear_array)} bytes")
-    print(return_original_file(linear_array))
+    print(return_original_file(linear_array))"
+    """
