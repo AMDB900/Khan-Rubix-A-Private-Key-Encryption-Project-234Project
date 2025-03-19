@@ -26,22 +26,12 @@ def get_key():
 
     return filename
 
-def  binary_to_hex(data):
-    # Binary string to bytes object
-    num_bits = len(data)
-    num_hex_digits = (num_bits + 3) // 4
-    return num_bits.to_bytes(4, byteorder='little') + hex(int(data, 2))[2:].zfill(num_hex_digits).encode()
-
-def hex_to_binary(data):
-    # Bytes object to binary string
-    return bin(int(data[4:].decode(), 16))[2:].zfill(int.from_bytes(data[0:4], byteorder='little'))
-
 if __name__ == "__main__":
 
     pi_digits = read_pi_digits('pi_10000_digits.txt')
     padded_key = load_and_pad_key_from_file('Screenshot 2025-02-20 160715.png', pi_digits)
 
-    ## XOR with HuffmanEncoding
+    ## Getting and padding the file and key
     print("Select a file to encrypt:")
     content, filename = get_file()
     data = pad_file(content, filename)
@@ -51,6 +41,8 @@ if __name__ == "__main__":
     print("Padded size:", len(data))
     print()
 
+    ## START OF ENCRYPTION
+
     # XOR the key against the file in 1KB chunks
     print("XOR... ", end="")
 
@@ -58,7 +50,7 @@ if __name__ == "__main__":
     encrypted = xor(data, key)
     end_time = time.perf_counter()
 
-    fxor_time = end_time - start_time
+    fxor_time = end_time - start_time    # Time the XOR
     print(f"           finished in {fxor_time:7.4f} seconds")
 
     # Perform Huffman encoding of resulting array
@@ -68,33 +60,39 @@ if __name__ == "__main__":
     encoded_data, tree = huffman_encode(encrypted)
     end_time = time.perf_counter()
 
-    huffman_time = end_time - start_time
+    huffman_time = end_time - start_time    # Time the huffman encoding
     print(f"finished in {huffman_time:7.4f} seconds")
 
-    encryption_time = huffman_time + fxor_time
+    encryption_time = huffman_time + fxor_time  # Time the encryption process
     print(f"Total encryption time ------- {encryption_time:7.4f} seconds")
 
-    #print("\nEncrypted:", encoded_data.encode())
-
     # Binary string to bytes
-    encoded_bytes = binary_to_hex(encoded_data)
+    encoded_bytes = hex(int('1' + encoded_data, 2))[2:].encode()
 
     print("Encrypted size:", len(encoded_bytes))
-    print(byte_frequency_analysis(encoded_bytes))
-    print()
+    print("\nBYTE FREQUENCY ANALYSIS\n-----------------------\n", byte_frequency_analysis(encoded_bytes))
 
+
+    #############################################
+    ##         RUBIK's SHUFFLE ALGORITHM       ##
+    ##                GOES HERE                ##
+    ## encoded_bytes = shuffle(encoded_bytes)  ##
+    #############################################
+
+    ## END OF ENCRYPTION
+
+    # Output of encryption: .khn filetype
     with open("text.khn", "wb") as file:
        file.write(encoded_bytes)
 
+    ## START OF DECRYPTION
 
-    ###############################
-    ## RUBIK's SHUFFLE ALGORITHM ##
-    ##        GOES HERE          ##
-    ###############################
-
+    ##############################################
+    ## encoded_bytes = unshuffle(encoded_bytes) ##
+    ##############################################
 
     # Byte object to binary string
-    decoded_bytes = hex_to_binary(encoded_bytes)
+    decoded_bytes = bin(int(encoded_bytes.decode(), 16))[3:]
 
     # Perform Huffman decoding
     print("\nHuffman decode... ", end="")
@@ -103,7 +101,7 @@ if __name__ == "__main__":
     decoded_data = huffman_decode(decoded_bytes, tree)
     end_time = time.perf_counter()
 
-    decode_time = end_time - start_time
+    decode_time = end_time - start_time     # Time the huffman decoding
     print(f"finished in {decode_time:7.4f} seconds")
 
     # XOR the decoded data against the file
@@ -113,11 +111,13 @@ if __name__ == "__main__":
     decrypted = xor(decoded_data, key)
     end_time = time.perf_counter()
 
-    rxor_time = end_time - start_time
+    rxor_time = end_time - start_time   # Time the reverse XOR
     print(f"   finished in {rxor_time:7.4f} seconds")
 
-    decryption_time = rxor_time + decode_time
+    decryption_time = rxor_time + decode_time   # Time the decryption process
     print(f"Total decryption time ------- {decryption_time:7.4f} seconds")
+
+    ## END OF DECRYPTION
 
     # print("\nDecrypted:", decrypted)
     print("Decrypted size:", len(decrypted))
@@ -129,10 +129,11 @@ if __name__ == "__main__":
 
     print("\nExtracting file size and suffix / Removing padding...", end='')
 
+    # Remove padding, extract suffix, and output file
     start_time = time.perf_counter()
     og = return_original_file(decrypted)
     end_time = time.perf_counter()
 
-    extract_time = end_time - start_time
+    extract_time = end_time - start_time    # Time the extraction
     print(f" {extract_time:.4f} seconds")
     print("Extracted size:", len(og))
