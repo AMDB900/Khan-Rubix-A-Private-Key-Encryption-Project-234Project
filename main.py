@@ -65,8 +65,7 @@ if __name__ == "__main__":
     print(f"finished in {huffman_time:7.4f} seconds")
 
     # Binary string to bytes
-    encoded_bytes = hex(int('1' + encoded_data, 2))[2:].encode()
-
+    encoded_bytes = bytearray(int(encoded_data, 2).to_bytes((len(encoded_data) + 7) // 8, 'big'))
 
     #############################################
     ##         RUBIK's SHUFFLE ALGORITHM       ##
@@ -139,7 +138,7 @@ if __name__ == "__main__":
     print(f"finished in {unshuffle_time:7.4f} seconds")
 
     # Byte object to binary string
-    decoded_bytes = bin(int(unshuffled_bytes.decode(), 16))[3:]
+    decoded_bytes = ''.join(format(byte, '08b') for byte in unshuffled_bytes)
 
     # Perform Huffman decoding
     print("Huffman decode... ", end="")
