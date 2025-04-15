@@ -1,5 +1,6 @@
 from xor import *
 from HuffmanEncoding import *
+from bytecube import *
 
 def get_key():
     # List all files in the current directory
@@ -63,14 +64,8 @@ if __name__ == "__main__":
     huffman_time = end_time - start_time    # Time the huffman encoding
     print(f"finished in {huffman_time:7.4f} seconds")
 
-    encryption_time = huffman_time + fxor_time  # Time the encryption process
-    print(f"Total encryption time ------- {encryption_time:7.4f} seconds")
-
     # Binary string to bytes
     encoded_bytes = hex(int('1' + encoded_data, 2))[2:].encode()
-
-    print("Encrypted size:", len(encoded_bytes))
-    print("\nBYTE FREQUENCY ANALYSIS\n-----------------------\n", byte_frequency_analysis(encoded_bytes))
 
 
     #############################################
@@ -78,12 +73,41 @@ if __name__ == "__main__":
     ##                GOES HERE                ##
     ## encoded_bytes = shuffle(encoded_bytes)  ##
     #############################################
+    
+    print("Cube shuffle...   ", end="")
+    start_time = time.perf_counter()
+    cube_size = 256
+    bcube = ByteCube(cube_size)
+    bcube.setBytes(encoded_bytes)
+    for x in range(cube_size):
+        for y in range(cube_size):
+            bcube.shiftXY(x,y, key[(x+y*cube_size)%len(key)])
+
+    for x in range(cube_size):
+        for z in range(cube_size):
+            bcube.shiftXZ(x,z, key[(x+z*cube_size+cube_size*cube_size)%len(key)])
+
+    for y in range(cube_size):
+        for z in range(cube_size):
+            bcube.shiftYZ(y,z, key[(y+z*cube_size+cube_size*cube_size*2)%len(key)])
+    
+    shuffled_bytes = bcube.getBytes()
+    end_time = time.perf_counter()
+    shuffle_time = end_time - start_time
+    print(f"finished in {shuffle_time:7.4f} seconds")
 
     ## END OF ENCRYPTION
 
+    encryption_time = huffman_time + fxor_time + shuffle_time  # Time the encryption process
+    print(f"Total encryption time ------- {encryption_time:7.4f} seconds")
+
+    print("Encrypted size:", len(shuffled_bytes))
+
+    print("\nBYTE FREQUENCY ANALYSIS\n-----------------------\n", byte_frequency_analysis(encoded_bytes))
+
     # Output of encryption: .khn filetype
     with open("text.khn", "wb") as file:
-       file.write(encoded_bytes)
+       file.write(shuffled_bytes)
 
     ## START OF DECRYPTION
 
@@ -91,11 +115,34 @@ if __name__ == "__main__":
     ## encoded_bytes = unshuffle(encoded_bytes) ##
     ##############################################
 
+    print("\nCube unshuffle... ", end="")
+    start_time = time.perf_counter()
+    cube_size =256
+    bcube = ByteCube(cube_size)
+    bcube.setBytes(shuffled_bytes)
+
+    for y in range(cube_size):
+        for z in range(cube_size):
+            bcube.shiftYZ(y,z, -1*(key[(y+z*cube_size+cube_size*cube_size*2)%len(key)]))
+
+    for x in range(cube_size):
+        for z in range(cube_size):
+            bcube.shiftXZ(x,z, -1*(key[(x+z*cube_size+cube_size*cube_size)%len(key)]))
+
+    for x in range(cube_size):
+        for y in range(cube_size):
+            bcube.shiftXY(x,y, -1*(key[(x+y*cube_size)%len(key)]))
+
+    unshuffled_bytes = bcube.getBytes()
+    end_time = time.perf_counter()
+    unshuffle_time = end_time - start_time
+    print(f"finished in {unshuffle_time:7.4f} seconds")
+
     # Byte object to binary string
-    decoded_bytes = bin(int(encoded_bytes.decode(), 16))[3:]
+    decoded_bytes = bin(int(unshuffled_bytes.decode(), 16))[3:]
 
     # Perform Huffman decoding
-    print("\nHuffman decode... ", end="")
+    print("Huffman decode... ", end="")
 
     start_time = time.perf_counter()
     decoded_data = huffman_decode(decoded_bytes, tree)
@@ -114,7 +161,7 @@ if __name__ == "__main__":
     rxor_time = end_time - start_time   # Time the reverse XOR
     print(f"   finished in {rxor_time:7.4f} seconds")
 
-    decryption_time = rxor_time + decode_time   # Time the decryption process
+    decryption_time = rxor_time + decode_time + unshuffle_time  # Time the decryption process
     print(f"Total decryption time ------- {decryption_time:7.4f} seconds")
 
     ## END OF DECRYPTION
@@ -122,8 +169,11 @@ if __name__ == "__main__":
     # print("\nDecrypted:", decrypted)
     print("Decrypted size:", len(decrypted))
 
+    print("")
+    if encoded_bytes == unshuffled_bytes:
+        print("Success: Encoded Data = Unshuffled Data")
     if encrypted == decoded_data:
-        print("\nSuccess: Decoded  Data = XOR'd Data")
+        print("Success: Decoded  Data = XOR'd Data")
     if decrypted == data:
         print("Success: Original Data = Decrypted Data")
 

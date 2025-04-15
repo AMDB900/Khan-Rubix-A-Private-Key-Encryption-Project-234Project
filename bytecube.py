@@ -23,17 +23,17 @@ class ByteCube:
 	
 	def shiftXY(self, x, y, n):
 		temparray = self.getSliceXY(x,y)
-		for i in range(size):
+		for i in range(self.size):
 			self.bytes[x + y * self.size + ((i+n)%self.size) * self.size * self.size] = temparray[i]
 	
 	def shiftXZ(self, x, z, n):
 		temparray = self.getSliceXZ(x,z)
-		for i in range(size):
+		for i in range(self.size):
 			self.bytes[x + ((i+n)%self.size) * self.size + z * self.size * self.size] = temparray[i]
 
 	def shiftYZ(self, y, z, n):
 		temparray = self.getSliceYZ(y,z)
-		for i in range(size):
+		for i in range(self.size):
 			self.bytes[((i+n)%self.size) + y * self.size + z * self.size * self.size] = temparray[i]
 	
 
@@ -57,6 +57,12 @@ if __name__ == "__main__":
 	print(byte_cube.getSliceXY(x,y))
 	
 	byte_cube.shiftXY(x,y,1)
+	
+	print(byte_cube.bytes)
+	
+	print(byte_cube.getSliceXY(x,y))
+	
+	byte_cube.shiftXY(x,y,-1)
 	
 	print(byte_cube.bytes)
 	
