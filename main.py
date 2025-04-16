@@ -4,7 +4,7 @@ from bytecube import *
 
 def get_key():
     # List all files in the current directory
-    files = [f for f in os.listdir() if os.path.isfile(f)]
+    files = [f for f in os.listdir("test_key") if os.path.isfile(os.path.join("test_key", f))]
     content = []
     if not files:
         print("No files found in the directory.")
@@ -25,7 +25,7 @@ def get_key():
 
         filename = files[choice]
 
-    return filename
+    return os.path.join("test_key", filename)
 
 if __name__ == "__main__":
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     encrypted = xor(data, key)
     end_time = time.perf_counter()
 
-    fxor_time = end_time - start_time    # Time the XOR
+    fxor_time = end_time - start_time  # Time the XOR
     print(f"           finished in {fxor_time:7.4f} seconds")
 
     # Perform Huffman encoding of resulting array
@@ -61,18 +61,18 @@ if __name__ == "__main__":
     encoded_data, tree = huffman_encode(encrypted)
     end_time = time.perf_counter()
 
-    huffman_time = end_time - start_time    # Time the huffman encoding
+    huffman_time = end_time - start_time  # Time the huffman encoding
     print(f"finished in {huffman_time:7.4f} seconds")
 
     # Binary string to bytes
-    encoded_bytes = bytearray(int(encoded_data, 2).to_bytes((len(encoded_data) + 7) // 8, 'big'))
+    encoded_bytes = hex(int('1' + encoded_data, 2))[2:].encode()
 
     #############################################
     ##         RUBIK's SHUFFLE ALGORITHM       ##
     ##                GOES HERE                ##
     ## encoded_bytes = shuffle(encoded_bytes)  ##
     #############################################
-    
+
     print("Cube shuffle...   ", end="")
     start_time = time.perf_counter()
     cube_size = 256
@@ -80,16 +80,16 @@ if __name__ == "__main__":
     bcube.setBytes(encoded_bytes)
     for x in range(cube_size):
         for y in range(cube_size):
-            bcube.shiftXY(x,y, key[(x+y*cube_size)%len(key)])
+            bcube.shiftXY(x, y, key[(x + y * cube_size) % len(key)])
 
     for x in range(cube_size):
         for z in range(cube_size):
-            bcube.shiftXZ(x,z, key[(x+z*cube_size+cube_size*cube_size)%len(key)])
+            bcube.shiftXZ(x, z, key[(x + z * cube_size + cube_size * cube_size) % len(key)])
 
     for y in range(cube_size):
         for z in range(cube_size):
-            bcube.shiftYZ(y,z, key[(y+z*cube_size+cube_size*cube_size*2)%len(key)])
-    
+            bcube.shiftYZ(y, z, key[(y + z * cube_size + cube_size * cube_size * 2) % len(key)])
+
     shuffled_bytes = bcube.getBytes()
     end_time = time.perf_counter()
     shuffle_time = end_time - start_time
@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
     # Output of encryption: .khn filetype
     with open("text.khn", "wb") as file:
-       file.write(shuffled_bytes)
+        file.write(shuffled_bytes)
 
     ## START OF DECRYPTION
 
@@ -116,21 +116,21 @@ if __name__ == "__main__":
 
     print("\nCube unshuffle... ", end="")
     start_time = time.perf_counter()
-    cube_size =256
+    cube_size = 256
     bcube = ByteCube(cube_size)
     bcube.setBytes(shuffled_bytes)
 
     for y in range(cube_size):
         for z in range(cube_size):
-            bcube.shiftYZ(y,z, -1*(key[(y+z*cube_size+cube_size*cube_size*2)%len(key)]))
+            bcube.shiftYZ(y, z, -1 * (key[(y + z * cube_size + cube_size * cube_size * 2) % len(key)]))
 
     for x in range(cube_size):
         for z in range(cube_size):
-            bcube.shiftXZ(x,z, -1*(key[(x+z*cube_size+cube_size*cube_size)%len(key)]))
+            bcube.shiftXZ(x, z, -1 * (key[(x + z * cube_size + cube_size * cube_size) % len(key)]))
 
     for x in range(cube_size):
         for y in range(cube_size):
-            bcube.shiftXY(x,y, -1*(key[(x+y*cube_size)%len(key)]))
+            bcube.shiftXY(x, y, -1 * (key[(x + y * cube_size) % len(key)]))
 
     unshuffled_bytes = bcube.getBytes()
     end_time = time.perf_counter()
@@ -138,7 +138,7 @@ if __name__ == "__main__":
     print(f"finished in {unshuffle_time:7.4f} seconds")
 
     # Byte object to binary string
-    decoded_bytes = ''.join(format(byte, '08b') for byte in unshuffled_bytes)
+    decoded_bytes = bin(int(unshuffled_bytes.decode(), 16))[3:]
 
     # Perform Huffman decoding
     print("Huffman decode... ", end="")
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     decoded_data = huffman_decode(decoded_bytes, tree)
     end_time = time.perf_counter()
 
-    decode_time = end_time - start_time     # Time the huffman decoding
+    decode_time = end_time - start_time  # Time the huffman decoding
     print(f"finished in {decode_time:7.4f} seconds")
 
     # XOR the decoded data against the file
@@ -157,7 +157,7 @@ if __name__ == "__main__":
     decrypted = xor(decoded_data, key)
     end_time = time.perf_counter()
 
-    rxor_time = end_time - start_time   # Time the reverse XOR
+    rxor_time = end_time - start_time  # Time the reverse XOR
     print(f"   finished in {rxor_time:7.4f} seconds")
 
     decryption_time = rxor_time + decode_time + unshuffle_time  # Time the decryption process
@@ -183,6 +183,6 @@ if __name__ == "__main__":
     og = return_original_file(decrypted)
     end_time = time.perf_counter()
 
-    extract_time = end_time - start_time    # Time the extraction
+    extract_time = end_time - start_time  # Time the extraction
     print(f" {extract_time:.4f} seconds")
     print("Extracted size:", len(og))
