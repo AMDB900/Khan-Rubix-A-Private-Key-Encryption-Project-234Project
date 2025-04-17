@@ -56,15 +56,24 @@ Tools for padding keys and input files. Keys will be padded to 1KB using a hash 
 of the key to select where to start adding garbage data from pi digits. Padding will
 wrap around to the start of the pi digits. Files will be padded to 12MB with information
 about the length of the file, the filetype, and with random bytes from the original string.
+
 ### Randomization.py
 Tools to generate random keys, patterns for shuffling, and huffman-encoded data.
+
 ### xor.py
+```
+def xor(text, key) -> bytes
 
+    Args:
+        text: Bytes or bytearray. Textual input that you want to encrypt
+        key: Bytes or bytearray. The length of the key must be exactly 1KB.
+```
 
-## Files
-### pi_10000_digits.txt
-Text file with the first ten-thousand digits of pi.
-### Screenshot 2025-02-20 160715
+## bytecube.py
+
+## List of Files
+### main.py
+Main executable.
 ### test_input
 Folder with testing files.
 * 1.docx - Word Document file. Includes text, tables, charts and images.
@@ -73,3 +82,20 @@ Folder with testing files.
 * 4 - All Ones
 * 5 - "01010101010..."
 * 6.png - Testing image
+### testing
+Folder for xor key integration and speed comparison.
+* xor_key_integration.py
+* xor_speed_compare.py
+### test_key
+Folder with testing keys. They are the same as the test_input files.
+### pi_10000_digits.txt
+Text file with the first ten-thousand digits of pi.
+### Screenshot 2025-02-20 160715
+### xor.py
+### HuffmanEncoding.py
+### bytecube.py
+### test_file_randomization.ipynb
+### padding.py
+### byte_frequency_analysis.py
+### Randomization.py
+### README.md
