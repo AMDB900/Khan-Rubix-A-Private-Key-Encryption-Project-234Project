@@ -69,7 +69,7 @@ def xor(text, key) -> bytes
         key: Bytes or bytearray. The length of the key must be exactly 1KB.
 ```
 
-## bytecube.py
+### bytecube.py
 
 ## List of Files
 ### main.py
