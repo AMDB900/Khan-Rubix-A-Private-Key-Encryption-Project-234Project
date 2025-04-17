@@ -8,7 +8,19 @@ from collections import Counter
 # Ref: https://www.geeksforgeeks.org/huffman-coding-in-python/
 from padding import *
 
+
 class HuffmanNode:
+    """"
+    A class representing a node in the Huffman tree.
+    
+    Attributes:
+        byte: The byte value associated with the node.
+        freq: The frequency of the byte in the input data.
+        left: Pointer to the left child node.
+        right: Pointer to the right child node.
+    Methods:
+        __lt__: Comparison method for priority queue (min-heap) based on frequency.
+    """
     # A node in the Huffman tree
     def __init__(self, byte, freq):
         self.byte = byte
@@ -38,6 +50,16 @@ def byte_frequency_analysis(data):
     return sorted_bytes
 
 def build_huffman_tree(byte_frequencies):
+    """
+    Builds a Huffman tree from the list of byte frequencies using a heapq.
+
+    Args:
+        byte_frequencies: A list of byte patterns, sorted by frequency (descending) 
+                          and byte value (ascending) during tie-breakers.
+
+    Returns:
+        heap[0]: The root node of the Huffman tree.
+    """
     # Build the Huffman tree using a priority queue (min-heap)
     # Initialize the heap with leaf nodes for each byte
     heap = [HuffmanNode(byte, freq) for byte, freq in byte_frequencies]
@@ -53,7 +75,18 @@ def build_huffman_tree(byte_frequencies):
     return heap[0]
 
 
-def generate_huffman_codes(node, prefix="", huffman_codes={}):
+def generate_huffman_codes(node, prefix=b"", huffman_codes={}):
+    """
+    Recursively generates Huffman codes for each byte using the Huffman tree.
+
+    Args:
+        node: The current node in the Huffman tree.
+        prefix: The binary prefix accumulated so far (as a bytes object).
+        huffman_codes: Dictionary mapping bytes to their Huffman codes.
+
+    Returns:
+        huffman_codes: An updated dictionary mapping each byte to its corresponding Huffman binary code.
+    """
     if node is None:
         return
     if node.byte is not None:
@@ -63,6 +96,17 @@ def generate_huffman_codes(node, prefix="", huffman_codes={}):
     return huffman_codes
 
 def huffman_encode(data):
+    """
+    Encodes the input data using Huffman coding.
+
+    Args:
+        data: the bytes or bytearray object to be encoded
+
+    Returns:
+        A tuple containing:
+            - encoded_data: The Hufman encoded binary string as bytes.)
+            - root: the root node of the huffman tree.
+    """
     byte_frequencies = byte_frequency_analysis(data)
     root = build_huffman_tree(byte_frequencies)
     huffman_codes = generate_huffman_codes(root)
@@ -78,6 +122,16 @@ def huffman_encode(data):
 
 
 def huffman_decode(data, tree):
+    """
+    Decodes Huffman-encoded binary data using the Huffman tree.
+
+    Args:
+        data: A bytes or bytearray object representing the Huffman-encoded data.
+        tree: The root of the Huffman tree used during encoding.
+
+    Returns:
+        decoded_data: A bytearray containing the original uncompressed data.
+    """
     decoded_data = bytearray()
     node = tree
     for bit in data:
@@ -93,7 +147,17 @@ def huffman_decode(data, tree):
 # Function to get the file name from the user
 # Ref: https://www.geeksforgeeks.org/python-list-files-in-a-directory/
 def get_file():
+    """
+    Prompts the user to select a file from the 'test_input' directory.
 
+    Lists all available files, lets the user choose one, and returns its contents
+    after applying the appropriate padding function based on its extension.
+
+    Returns:
+        A tuple containing:
+            - content: The contents of the selected file.
+            - filename: The name of the selected file.
+    """
     # List all files in the current directory
     files = [f for f in os.listdir("test_input") if os.path.isfile(os.path.join("test_input", f))]
     content = []
@@ -125,6 +189,15 @@ def get_file():
 
 # Helper function to convert string to binary representation for comparison
 def string_to_binary(s):
+    """
+    Converts a string into its binary (8-bit) representation.
+
+    Args:
+        s: string for conversion.
+
+    Returns:
+        A space-separated string of 8-bit binary values for each character.
+    """
     return ' '.join(format(ord(char), '08b') for char in s)
 
 if __name__ == "__main__":
