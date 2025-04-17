@@ -2,6 +2,23 @@ import copy
 
 
 class ByteCube:
+	""""
+	A class representing a 3D cube of bytes with methods for manipulating and accessing the data.
+	This class provides functionality to create a cube of a specified size, set and get bytes, and perform operations on slices of the cube.
+		
+    Attributes:
+        size: The size of the cube (number of bytes in each dimension).
+		bytes: A bytearray representing the cube's data.
+    Methods:
+        getBytes: Returns the bytearray representing the cube's data.
+		setBytes: Sets the bytearray representing the cube's data.
+		getSliceXY: Returns a slice of the cube in the XY plane.
+		getSliceXZ: Returns a slice of the cube in the XZ plane.
+		getSliceYZ: Returns a slice of the cube in the YZ plane.
+		shiftXY: Shifts a slice of the cube in the XY plane by a specified amount.
+		shiftXZ: Shifts a slice of the cube in the XZ plane by a specified amount.
+		shiftYZ: Shifts a slice of the cube in the YZ plane by a specified amount.
+    """
 	def __init__(self, size):
 		self.size = size
 		self.bytes = bytearray(0 for n in range(self.size * self.size * self.size))
@@ -37,7 +54,7 @@ class ByteCube:
 			self.bytes[((i+n)%self.size) + y * self.size + z * self.size * self.size] = temparray[i]
 	
 
-
+# For testing purposes
 if __name__ == "__main__":
 
 	size = 3

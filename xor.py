@@ -1,6 +1,16 @@
 from HuffmanEncoding import *
 
 def xor(text, key):
+    """
+    Applies XOR encryption to the given text using the provided key.
+
+    Args: 
+        text (bytes): The content of the file to be encrypted.
+        key (bytes): The key used for encryption.
+    
+    Returns:
+        bytes: The encrypted content.
+    """
     if len(text) != (16 * 1024 * 1024): # File size set to 16MB
         print(f"Error: File size is {len(text)}B. File must be {16 * 1024 * 1024}B in size")
         exit()

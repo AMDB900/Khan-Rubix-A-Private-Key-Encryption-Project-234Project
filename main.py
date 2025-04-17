@@ -3,6 +3,14 @@ from HuffmanEncoding import *
 from bytecube import *
 
 def get_key():
+    """
+    Prompts the user to select a file from the 'test_key' directory.
+
+    Lists all available files, lets the user choose one, and the address of the selected file.
+
+    Returns:
+        The address of the selected file.
+    """
     # List all files in the current directory
     files = [f for f in os.listdir("test_key") if os.path.isfile(os.path.join("test_key", f))]
     content = []
@@ -27,6 +35,7 @@ def get_key():
 
     return os.path.join("test_key", filename)
 
+# Primary encryption execution
 if __name__ == "__main__":
 
     pi_digits = read_pi_digits('pi_10000_digits.txt')

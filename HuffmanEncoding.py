@@ -200,6 +200,7 @@ def string_to_binary(s):
     """
     return ' '.join(format(ord(char), '08b') for char in s)
 
+# For testing purposes
 if __name__ == "__main__":
     print("Select a file to encrypt:")
     data = get_file()
