@@ -37,8 +37,6 @@ python3 main.py
 ```
 
 ## Modules
-### 234_project.ipynb
-
 ### byte_frequency_analysis.py
 Analyzes the frequency of each byte in the input data and returns an array
     with the most frequent byte as the first element.
@@ -50,7 +48,7 @@ Analyzes the frequency of each byte in the input data and returns an array
         A list of byte patterns, sorted by frequency (descending) and byte value (ascending) during tie-breakers.
         
 ### HuffmanEncoding.py
-
+Tools for Huffman Encoding.
 ### padding.py
 Tools for padding keys and input files. Keys will be padded to 1KB using a hash function 
 of the key to select where to start adding garbage data from pi digits. Padding will
@@ -70,6 +68,7 @@ def xor(text, key) -> bytes
 ```
 
 ### bytecube.py
+Main file for bytecube implementation. Includes tools for bytecube manipulation.
 
 ## List of Files
 ### main.py
