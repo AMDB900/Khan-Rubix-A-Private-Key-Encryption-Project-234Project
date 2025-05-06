@@ -31,7 +31,6 @@ def get_key():
 if __name__ == "__main__":
 
     pi_digits = read_pi_digits('pi_10000_digits.txt')
-    padded_key = load_and_pad_key_from_file('Screenshot 2025-02-20 160715.png', pi_digits)
 
     ## Getting and padding the file and key
     print("Select a file to encrypt:")
