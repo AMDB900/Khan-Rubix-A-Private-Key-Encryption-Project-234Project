@@ -75,7 +75,7 @@ def build_huffman_tree(byte_frequencies):
     return heap[0]
 
 
-def generate_huffman_codes(node, prefix=b"", huffman_codes={}):
+def generate_huffman_codes(node, prefix="", huffman_codes={}):
     """
     Recursively generates Huffman codes for each byte using the Huffman tree.
 
