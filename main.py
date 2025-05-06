@@ -66,6 +66,8 @@ if __name__ == "__main__":
     print(f"finished in {huffman_time:7.4f} seconds")
 
     padded_data = fibonacciEncodeLength(encoded_data)
+    while(len(padded_data)%8!=0):
+        padded_data = padded_data + "1"
 
 
     # Binary string to bytes
@@ -178,7 +180,7 @@ if __name__ == "__main__":
     print("Decrypted size:", len(decrypted))
 
     print("")
-    if encoded_bytes == unshuffled_bytes:
+    if encoded_data == decoded_bytes:
         print("Success: Encoded Data = Unshuffled Data")
     if encrypted == decoded_data:
         print("Success: Decoded  Data = XOR'd Data")
