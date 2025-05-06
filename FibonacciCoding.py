@@ -1,3 +1,5 @@
+import re
+
 #fibonacci numbers starting from 1,2
 fibonacciNum = [1,2]
 
@@ -18,7 +20,7 @@ def getFibonacciCode(n):
 		codeLength = codeLength + 1
 	#get the fibonacci number before that one
 	codeLength = codeLength - 1
-	#end code
+	#start with end code
 	output = "1"
 	#start from the largest number less than n
 	for i in range(codeLength, -1, -1):
@@ -33,10 +35,37 @@ def getFibonacciCode(n):
 			#prepend a 0
 			output = "0" + output
 	return output
+
+#calculate integer value from fibonacci code fibonacci
+def decodeFibonacciCode(f):
+	assert(f[-2:]) == "11"
+	return sum([getFibonacciNum(i) for i in range(len(f)-1) if f[i]=="1"])
+
+#get the length of string s and prepend fibonacci code of length	
+def fibonacciEncodeLength(s):
+	return getFibonacciCode(len(s)) + s
+	
+#read fibonacci coded length from the start of string s and shorten the string to that length
+def fibonacciUnpad(s):
+	m = re.match(r'(0|10)*11', s)
+	return m.string[m.end(0):m.end(0)+decodeFibonacciCode(m[0])]
 	
 if __name__ == "__main__":
-	for i in range(10, 0 ,-1):
-		print(getFibonacciNum(i))
+	#for i in range(10, 0 ,-1):
+	#	print(getFibonacciNum(i))
 	
-	for i in range(1,100):
-		print(""+str(i)+": "+getFibonacciCode(i))
+	#for i in range(1,100):
+	#i=100
+	if(True):
+		string = "CHECK THIS OUT"
+		#fcode = getFibonacciCode(len(string))
+		
+		encodedString = fibonacciEncodeLength(string) + "PADDING"
+		print(encodedString)
+		#print(decodeFibonacciCode(fcode))
+		#splitTest = "" + fcode + str(i)
+		#m = re.match(r'(0|10)*11', encodedString)
+		#print(m.string[m.end(0):m.end(0)+decodeFibonacciCode(m[0])])
+		decodedString = fibonacciUnpad(encodedString)
+		print(decodedString)
+		

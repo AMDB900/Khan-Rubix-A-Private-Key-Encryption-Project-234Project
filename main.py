@@ -1,6 +1,7 @@
 from xor import *
 from HuffmanEncoding import *
 from bytecube import *
+from FibonacciCoding import *
 
 def get_key():
     # List all files in the current directory
@@ -64,8 +65,11 @@ if __name__ == "__main__":
     huffman_time = end_time - start_time    # Time the huffman encoding
     print(f"finished in {huffman_time:7.4f} seconds")
 
+    padded_data = fibonacciEncodeLength(encoded_data)
+
+
     # Binary string to bytes
-    encoded_bytes = bytearray(int(encoded_data, 2).to_bytes((len(encoded_data) + 7) // 8, 'big'))
+    encoded_bytes = bytearray(int(padded_data, 2).to_bytes((len(padded_data) + 7) // 8, 'big'))
     #encoded_bytes = hex(int('1' + encoded_data, 2))[2:].encode()
 
 
@@ -142,6 +146,8 @@ if __name__ == "__main__":
     # Byte object to binary string
     decoded_bytes = ''.join(format(byte, '08b') for byte in unshuffled_bytes)
     #decoded_bytes = bin(int(unshuffled_bytes.decode(), 16))[3:]
+
+    decoded_bytes = fibonacciUnpad(decoded_bytes)
 
     # Perform Huffman decoding
     print("Huffman decode... ", end="")
