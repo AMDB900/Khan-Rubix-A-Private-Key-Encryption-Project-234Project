@@ -46,7 +46,8 @@ There are 5 widgets that are shown by the program:
 The program comes with zero dependencies as all come pre-compiled with the executable. \
 Refer to [Executable Installation](#executable-installation) for downloading the executable. \
 Refer to [Project Usage](#project-usage) for installing the source code to your machine. \
-All source code is located in the /src folder while all test files are located in Test_files. \
+All source code is located in the /src folder while all test files are located in Test_files.
+## Further Instructions for Highly Technical Users to Customize the Program.<a name="hightech"></a>
 For compilation of source code, do the following:
 - Install Pyinstaller:
 ```
@@ -59,9 +60,10 @@ cd src
 ```
 pyinstaller --onefile --noconsole --add-data "pi_10000_digits.txt;." app_gui.py
 ```
+- If you would like to edit the pi constant, change the contents of "pi_10000_digits.txt" 
 
-## Further Instructions for Highly Technical Users to Customize the Program.<a name="hightech"></a>
-
+The program only uses base python libraries so no installations other than python need to be performed. \
+The instructions provided currently only work on Windows and was tested on Windows 11.
 ## Executable Installation <a name="executable-installation"></a>
 The windows executable is provided as Khan-Rubix Encryptor.exe. \
 Download that file or the project as zip.
