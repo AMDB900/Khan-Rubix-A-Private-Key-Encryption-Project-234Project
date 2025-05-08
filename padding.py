@@ -168,10 +168,8 @@ def return_original_file(content):
     data = content[9:9 + length]
 
     text = "output" + suffix.decode('utf-8', errors="ignore")
-    with open(text, "wb") as file:
-        file.write(data)
     
-    return data
+    return data, text
 
 # For testing purposes
 if __name__ == "__main__":

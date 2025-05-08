@@ -7,6 +7,7 @@ from padding import read_pi_digits, pad_file, load_and_pad_key_from_file, return
 from xor import xor
 from HuffmanEncoding import huffman_encode, huffman_decode
 from bytecube import ByteCube
+from FibonacciCoding import *
 
 class KhanApp:
     def __init__(self, root):
@@ -129,36 +130,71 @@ class KhanApp:
             self.log(f"Padded size: {len(data)} bytes")
 
             key = load_and_pad_key_from_file(self.key_file, self.pi_digits)
+
+            # XOR the key against the file in 1KB chunks
+            start_time = time.perf_counter()
             xored = xor(data, key)
+            end_time = time.perf_counter()
+            fxor_time = end_time - start_time  # Time the XOR
+            self.log(f"           finished in {fxor_time:7.4f} seconds")
             self.log("✅ XOR encryption done.")
 
+
+            # Perform Huffman encoding of resulting array
+            self.log("Huffman encode... ")
+            start_time = time.perf_counter()
             bits, tree = huffman_encode(xored)
+            end_time = time.perf_counter()
             tree_data = pickle.dumps(tree)
             tree_len = len(tree_data)
 
-            bits = '1' + bits
-            i = int(bits, 2)
-            hx = hex(i)[2:]
-            if len(hx) % 2:
-                hx = '0' + hx
-            raw = bytes.fromhex(hx)
-            self.log(f"Encoded to {len(raw)} bytes via Huffman.")
+            huffman_time = end_time - start_time  # Time the huffman encoding
+            self.log(f"finished in {huffman_time:7.4f} seconds")
 
-            cube_size = 266
-            bc = ByteCube(cube_size)
-            bc.setBytes(raw)
+            padded_data = fibonacciEncodeLength(bits)
+            while(len(padded_data)%8!=0):
+                padded_data = padded_data + "1"
+
+
+            # Binary string to bytes
+            encoded_bytes = bytearray(int(padded_data, 2).to_bytes((len(padded_data) + 7) // 8, 'big'))
+            #encoded_bytes = hex(int('1' + encoded_data, 2))[2:].encode()
+
+            #############################################
+            ##         RUBIK's SHUFFLE ALGORITHM       ##
+            ##                GOES HERE                ##
+            ## encoded_bytes = shuffle(encoded_bytes)  ##
+            #############################################
+
+            self.log("Cube shuffle...   ")
+            start_time = time.perf_counter()
+            cube_size = 256
+            bcube = ByteCube(cube_size)
+            bcube.setBytes(encoded_bytes)
             for x in range(cube_size):
                 for y in range(cube_size):
-                    bc.shiftXY(x, y, key[(x + y * cube_size) % len(key)])
+                    bcube.shiftXY(x, y, key[(x + y * cube_size) % len(key)])
+
             for x in range(cube_size):
                 for z in range(cube_size):
-                    bc.shiftXZ(x, z, key[(x + z * cube_size + cube_size ** 2) % len(key)])
+                    bcube.shiftXZ(x, z, key[(x + z * cube_size + cube_size * cube_size) % len(key)])
+
             for y in range(cube_size):
                 for z in range(cube_size):
-                    bc.shiftYZ(y, z, key[(y + z * cube_size + 2 * cube_size ** 2) % len(key)])
-            shuf = bc.getBytes()
+                    bcube.shiftYZ(y, z, key[(y + z * cube_size + cube_size * cube_size * 2) % len(key)])
 
-            final = tree_len.to_bytes(4, 'big') + tree_data + shuf
+            shuffled_bytes = bcube.getBytes()
+            end_time = time.perf_counter()
+            shuffle_time = end_time - start_time
+            self.log(f"finished in {shuffle_time:7.4f} seconds")
+
+            encryption_time = huffman_time + fxor_time + shuffle_time  # Time the encryption process
+            self.log(f"Total encryption time ------- {encryption_time:7.4f} seconds")
+
+            self.log(f"Encrypted size:{len(shuffled_bytes)}")
+
+            # self.log("\nBYTE FREQUENCY ANALYSIS\n-----------------------\n", byte_frequency_analysis(encoded_bytes))
+            final = tree_len.to_bytes(4, 'big') + tree_data + shuffled_bytes
             with open(self.output_file, 'wb') as f:
                 f.write(final)
 
@@ -169,49 +205,79 @@ class KhanApp:
             self.log(f"❌ Encryption error: {e}")
 
     def decrypt_file(self):
-        try:
-            start = time.perf_counter()
-            self.log("🔓 Starting decryption...")
+        # try:
+        start = time.perf_counter()
+        self.log("🔓 Starting decryption...")
 
-            with open(self.input_file, 'rb') as f:
-                full = f.read()
+        with open(self.input_file, 'rb') as f:
+            full = f.read()
 
-            tlen = int.from_bytes(full[:4], 'big')
-            tdat = full[4:4 + tlen]
-            tree = pickle.loads(tdat)
-            shuf = full[4 + tlen:]
+        tlen = int.from_bytes(full[:4], 'big')
+        tdat = full[4:4 + tlen]
+        tree = pickle.loads(tdat)
+        shuf = full[4 + tlen:]
 
-            key = load_and_pad_key_from_file(self.key_file, self.pi_digits)
+        key = load_and_pad_key_from_file(self.key_file, self.pi_digits)
 
-            cube_size = 266
-            bc = ByteCube(cube_size)
-            bc.setBytes(shuf)
+        self.log("\nCube unshuffle... ")
+        start_time = time.perf_counter()
+        cube_size = 256
+        bcube = ByteCube(cube_size)
+        bcube.setBytes(shuf)
+
+        for y in range(cube_size):
+            for z in range(cube_size):
+                bcube.shiftYZ(y, z, -1 * (key[(y + z * cube_size + cube_size * cube_size * 2) % len(key)]))
+
+        for x in range(cube_size):
+            for z in range(cube_size):
+                bcube.shiftXZ(x, z, -1 * (key[(x + z * cube_size + cube_size * cube_size) % len(key)]))
+
+        for x in range(cube_size):
             for y in range(cube_size):
-                for z in range(cube_size):
-                    bc.shiftYZ(y, z, -key[(y + z * cube_size + 2 * cube_size ** 2) % len(key)])
-            for x in range(cube_size):
-                for z in range(cube_size):
-                    bc.shiftXZ(x, z, -key[(x + z * cube_size + cube_size ** 2) % len(key)])
-            for x in range(cube_size):
-                for y in range(cube_size):
-                    bc.shiftXY(x, y, -key[(x + y * cube_size) % len(key)])
-            raw = bc.getBytes()
+                bcube.shiftXY(x, y, -1 * (key[(x + y * cube_size) % len(key)]))
 
-            i = int.from_bytes(raw, byteorder='big')
-            bits = bin(i)[3:]
+        unshuffled_bytes = bcube.getBytes()
+        end_time = time.perf_counter()
+        unshuffle_time = end_time - start_time
+        self.log(f"finished in {unshuffle_time:7.4f} seconds")
 
-            data = huffman_decode(bits, tree)[:16 * 1024 * 1024]
-            plain = xor(data, key)
+        decoded_bytes = ''.join(format(byte, '08b') for byte in unshuffled_bytes)
+        #decoded_bytes = bin(int(unshuffled_bytes.decode(), 16))[3:]
 
-            file_data, fname = return_original_file(plain)
-            with open(fname, 'wb') as f:
-                f.write(file_data)
+        decoded_bytes = fibonacciUnpad(decoded_bytes)
 
-            elapsed = time.perf_counter() - start
-            self.log(f"✅ File decrypted → {fname}")
-            self.log(f"🕒 Time taken: {elapsed:.2f} seconds")
-        except Exception as e:
-            self.log(f"❌ Decryption error: {e}")
+        # Perform Huffman decoding
+        self.log("Huffman decode... ")
+
+        start_time = time.perf_counter()
+        decoded_data = huffman_decode(decoded_bytes, tree)
+        end_time = time.perf_counter()
+
+        decode_time = end_time - start_time  # Time the huffman decoding
+        self.log(f"finished in {decode_time:7.4f} seconds")
+
+        self.log("Reverse XOR... ")
+
+        start_time = time.perf_counter()
+        decrypted = xor(decoded_data, key)
+        end_time = time.perf_counter()
+
+        rxor_time = end_time - start_time  # Time the reverse XOR
+        self.log(f"   finished in {rxor_time:7.4f} seconds")
+
+        decryption_time = rxor_time + decode_time + unshuffle_time  # Time the decryption process
+        self.log(f"Total decryption time ------- {decryption_time:7.4f} seconds")
+
+        file_data, fname = return_original_file(decrypted)
+        with open(fname, 'wb') as f:
+            f.write(file_data)
+
+        elapsed = time.perf_counter() - start
+        self.log(f"✅ File decrypted → {fname}")
+        self.log(f"🕒 Time taken: {elapsed:.2f} seconds")
+        # except Exception as e:
+        #     self.log(f"❌ Decryption error: {e}")
 
     def on_close(self):
         if self.using_custom_key and os.path.exists("custom_key.key"):
