@@ -63,7 +63,7 @@ pyinstaller --onefile --noconsole --add-data "pi_10000_digits.txt;." app_gui.py
 - If you would like to edit the pi constant, change the contents of "pi_10000_digits.txt" 
 
 The program only uses base python libraries so no installations other than python need to be performed. \
-The instructions provided currently only work on Windows and was tested on Windows 11.
+The instructions provided currently only work on Windows and was tested on Windows 10/11.
 ## Executable Installation <a name="executable-installation"></a>
 The windows executable is provided as Khan-Rubix Encryptor.exe. \
 Download that file or the project as zip.
