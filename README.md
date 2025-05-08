@@ -4,11 +4,12 @@
 Khan-Rubix is an executable utility that allows users to encrypt a file of up to 12Mb using a key of up to 1Kbytes in length, and a corresponding decryption function that takes the encrypted file as input and, given the same key, produces the original file.
 
 ## Table of Contents
-- [Installation](#installation)
-- [Usage](#usage)
+- [Executable Installation](#executable-installation)
+- [Project Usage](#project-usage)
 - [Modules](#modules)
+## Executable Installation <a name="executable-installation"></a>
 
-## Installation
+## Project Usage <a name="project-usage"></a>
 
 ### Steps
 1. Clone the repository:
@@ -19,8 +20,6 @@ Khan-Rubix is an executable utility that allows users to encrypt a file of up to
     ```bash
     cd path/to/the/project/root
     ```
-
-## Usage
 ### Running the Project
 Run from cmd or Powershell. For instance:
 
@@ -36,7 +35,7 @@ cd path/to/the/project/root
 python3 main.py
 ```
 
-## Modules
+## Modules <a name="modules"></a>
 ### byte_frequency_analysis.py
 Analyzes the frequency of each byte in the input data and returns an array
     with the most frequent byte as the first element.
