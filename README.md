@@ -35,10 +35,33 @@ There are 5 widgets that are shown by the program:
 6. Click the 'Encrypt' widget. Navigate to where you want to store your file and provide a file name then press enter.
 
 ### Steps for Decrypting a File
-
+1. Run the executable.
+2. Click the 'Select a File' widget and select the file you want to decrypt from your file explorer. Ensure that this is a .khn file
+3. Click either the 'Select a Key' or 'Custom Key' widget.
+4. If selecting 'Select a Key,' navigate the file explorer to find the key you want to use.
+5. If selecting 'Custom Key,' type the key you want into the prompt that will pop up.
+6. Click the 'Decrypt' widget. The program will prompt you to provide a name to the decrypted file.
+7. The decrypted file will be found in the same directory as the executable.
 ## Additional Instructions for Moderately Technical Users <a name="modtech"></a>
+The program comes with zero dependencies as all come pre-compiled with the executable. \
+Refer to [Executable Installation](#executable-installation) for downloading the executable. \
+Refer to [Project Usage](#project-usage) for installing the source code to your machine. \
+All source code is located in the /src folder while all test files are located in Test_files. \
+For compilation of source code, do the following:
+- Install Pyinstaller:
+```
+pip install pyinstaller
+```
+- For windows, Do the following commands from root of project:
+```
+cd src
+```
+```
+pyinstaller --onefile --noconsole --add-data "pi_10000_digits.txt;." app_gui.py
+```
 
 ## Further Instructions for Highly Technical Users to Customize the Program.<a name="hightech"></a>
+
 ## Executable Installation <a name="executable-installation"></a>
 The windows executable is provided as Khan-Rubix Encryptor.exe. \
 Download that file or the project as zip.
