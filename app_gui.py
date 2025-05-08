@@ -2,6 +2,7 @@ import os
 import time
 import pickle
 import tkinter as tk
+import tkinter.simpledialog as simpledialog
 from tkinter import filedialog, messagebox, scrolledtext
 from padding import read_pi_digits, pad_file, load_and_pad_key_from_file, return_original_file
 from xor import xor
@@ -24,7 +25,7 @@ class KhanApp:
 
         self.using_custom_key = False
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
-
+        self.decrypt_output_name = "output"
         self.build_ui()
 
     def build_ui(self):
@@ -56,7 +57,7 @@ class KhanApp:
     def select_input(self):
         self.input_file = filedialog.askopenfilename(
             title="Select file to encrypt/decrypt",
-            initialdir="F:/csus/sem 2/234/project/test_input"
+            initialdir=os.getcwd()
         )
         if self.input_file:
             self.log(f"Selected file: {self.input_file}")
@@ -64,7 +65,7 @@ class KhanApp:
     def select_key(self):
         self.key_file = filedialog.askopenfilename(
             title="Select private key",
-            initialdir="F:/csus/sem 2/234/project/test_key"
+            initialdir=os.getcwd()
         )
         if self.key_file:
             self.log(f"Selected key: {self.key_file}")
@@ -115,6 +116,11 @@ class KhanApp:
         if not self.input_file or not self.key_file:
             messagebox.showerror("Missing Input", "Please select both a file and a key.")
             return
+
+    # Ask the user for the output file name
+        self.decrypt_output_name = simpledialog.askstring("Output File", "Enter name for the decrypted output file:")
+    # Check if user cancelled or left it blank
+        messagebox.showwarning("Output file given name:", self.decrypt_output_name)
         self.decrypt_file()
 
     def encrypt_file(self):
@@ -205,79 +211,79 @@ class KhanApp:
             self.log(f"❌ Encryption error: {e}")
 
     def decrypt_file(self):
-        # try:
-        start = time.perf_counter()
-        self.log("🔓 Starting decryption...")
+        try:
+            start = time.perf_counter()
+            self.log("🔓 Starting decryption...")
 
-        with open(self.input_file, 'rb') as f:
-            full = f.read()
+            with open(self.input_file, 'rb') as f:
+                full = f.read()
 
-        tlen = int.from_bytes(full[:4], 'big')
-        tdat = full[4:4 + tlen]
-        tree = pickle.loads(tdat)
-        shuf = full[4 + tlen:]
+            tlen = int.from_bytes(full[:4], 'big')
+            tdat = full[4:4 + tlen]
+            tree = pickle.loads(tdat)
+            shuf = full[4 + tlen:]
 
-        key = load_and_pad_key_from_file(self.key_file, self.pi_digits)
+            key = load_and_pad_key_from_file(self.key_file, self.pi_digits)
 
-        self.log("\nCube unshuffle... ")
-        start_time = time.perf_counter()
-        cube_size = 256
-        bcube = ByteCube(cube_size)
-        bcube.setBytes(shuf)
+            self.log("\nCube unshuffle... ")
+            start_time = time.perf_counter()
+            cube_size = 256
+            bcube = ByteCube(cube_size)
+            bcube.setBytes(shuf)
 
-        for y in range(cube_size):
-            for z in range(cube_size):
-                bcube.shiftYZ(y, z, -1 * (key[(y + z * cube_size + cube_size * cube_size * 2) % len(key)]))
-
-        for x in range(cube_size):
-            for z in range(cube_size):
-                bcube.shiftXZ(x, z, -1 * (key[(x + z * cube_size + cube_size * cube_size) % len(key)]))
-
-        for x in range(cube_size):
             for y in range(cube_size):
-                bcube.shiftXY(x, y, -1 * (key[(x + y * cube_size) % len(key)]))
+                for z in range(cube_size):
+                    bcube.shiftYZ(y, z, -1 * (key[(y + z * cube_size + cube_size * cube_size * 2) % len(key)]))
 
-        unshuffled_bytes = bcube.getBytes()
-        end_time = time.perf_counter()
-        unshuffle_time = end_time - start_time
-        self.log(f"finished in {unshuffle_time:7.4f} seconds")
+            for x in range(cube_size):
+                for z in range(cube_size):
+                    bcube.shiftXZ(x, z, -1 * (key[(x + z * cube_size + cube_size * cube_size) % len(key)]))
 
-        decoded_bytes = ''.join(format(byte, '08b') for byte in unshuffled_bytes)
-        #decoded_bytes = bin(int(unshuffled_bytes.decode(), 16))[3:]
+            for x in range(cube_size):
+                for y in range(cube_size):
+                    bcube.shiftXY(x, y, -1 * (key[(x + y * cube_size) % len(key)]))
 
-        decoded_bytes = fibonacciUnpad(decoded_bytes)
+            unshuffled_bytes = bcube.getBytes()
+            end_time = time.perf_counter()
+            unshuffle_time = end_time - start_time
+            self.log(f"finished in {unshuffle_time:7.4f} seconds")
 
-        # Perform Huffman decoding
-        self.log("Huffman decode... ")
+            decoded_bytes = ''.join(format(byte, '08b') for byte in unshuffled_bytes)
+            #decoded_bytes = bin(int(unshuffled_bytes.decode(), 16))[3:]
 
-        start_time = time.perf_counter()
-        decoded_data = huffman_decode(decoded_bytes, tree)
-        end_time = time.perf_counter()
+            decoded_bytes = fibonacciUnpad(decoded_bytes)
 
-        decode_time = end_time - start_time  # Time the huffman decoding
-        self.log(f"finished in {decode_time:7.4f} seconds")
+            # Perform Huffman decoding
+            self.log("Huffman decode... ")
 
-        self.log("Reverse XOR... ")
+            start_time = time.perf_counter()
+            decoded_data = huffman_decode(decoded_bytes, tree)
+            end_time = time.perf_counter()
 
-        start_time = time.perf_counter()
-        decrypted = xor(decoded_data, key)
-        end_time = time.perf_counter()
+            decode_time = end_time - start_time  # Time the huffman decoding
+            self.log(f"finished in {decode_time:7.4f} seconds")
 
-        rxor_time = end_time - start_time  # Time the reverse XOR
-        self.log(f"   finished in {rxor_time:7.4f} seconds")
+            self.log("Reverse XOR... ")
 
-        decryption_time = rxor_time + decode_time + unshuffle_time  # Time the decryption process
-        self.log(f"Total decryption time ------- {decryption_time:7.4f} seconds")
+            start_time = time.perf_counter()
+            decrypted = xor(decoded_data, key)
+            end_time = time.perf_counter()
 
-        file_data, fname = return_original_file(decrypted)
-        with open(fname, 'wb') as f:
-            f.write(file_data)
+            rxor_time = end_time - start_time  # Time the reverse XOR
+            self.log(f"   finished in {rxor_time:7.4f} seconds")
 
-        elapsed = time.perf_counter() - start
-        self.log(f"✅ File decrypted → {fname}")
-        self.log(f"🕒 Time taken: {elapsed:.2f} seconds")
-        # except Exception as e:
-        #     self.log(f"❌ Decryption error: {e}")
+            decryption_time = rxor_time + decode_time + unshuffle_time  # Time the decryption process
+            self.log(f"Total decryption time ------- {decryption_time:7.4f} seconds")
+
+            file_data, fname = return_original_file(decrypted, self.decrypt_output_name)
+            with open(fname, 'wb') as f:
+                f.write(file_data)
+
+            elapsed = time.perf_counter() - start
+            self.log(f"✅ File decrypted → {fname}")
+            self.log(f"🕒 Time taken: {elapsed:.2f} seconds")
+        except Exception as e:
+            self.log(f"❌ Decryption error: {e}")
 
     def on_close(self):
         if self.using_custom_key and os.path.exists("custom_key.key"):

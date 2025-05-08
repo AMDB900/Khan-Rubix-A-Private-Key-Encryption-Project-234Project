@@ -8,7 +8,17 @@ import secrets
 import time
 import hashlib
 import os
+import sys
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 def read_pi_digits(file_path):
     """
     Opens a file containing the digits of pi and reads its contents, removing non integer digits.
@@ -16,6 +26,7 @@ def read_pi_digits(file_path):
     Returns:
         A string containing the digits of pi without decimal points or whitespaces.
     """
+    file_path = resource_path(file_path)
     with open(file_path, 'r') as f:
         pi_digits = f.read()  # Read all digits as a string
     return pi_digits.replace(".", "").strip()  # Remove the decimal point and any whitespace
@@ -146,7 +157,7 @@ def pad_file(file_content, input_file_path, seed=12345):
 
     return bytes(linear_array)
 
-def return_original_file(content):
+def return_original_file(content, file_name):
     """
     Extracts the original file from the padded content.
 
@@ -167,7 +178,7 @@ def return_original_file(content):
     # Gather file data based on length of the string
     data = content[9:9 + length]
 
-    text = "output" + suffix.decode('utf-8', errors="ignore")
+    text = file_name + suffix.decode('utf-8', errors="ignore")
     
     return data, text
 
