@@ -1,14 +1,31 @@
 # Project Documentation
-
+## Members
+- Ethan Baker (ethanbaker@csus.edu)
+- Andrei Bayani (adbayani@csus.edu)
+- Alex Oswalt (aoswalt@csus.edu)
+- Patrick Purta (ppurta@csus.edu)
+- Kevin Shiroya (kshiroya@csus.edu)
 ## Overview
 Khan-Rubix is an executable utility that allows users to encrypt a file of up to 12Mb using a key of up to 1Kbytes in length, and a corresponding decryption function that takes the encrypted file as input and, given the same key, produces the original file.
 
 ## Table of Contents
+- [Instructions for Non-Technical Users](#nontech)
 - [Executable Installation](#executable-installation)
 - [Project Usage](#project-usage)
 - [Modules](#modules)
-## Executable Installation <a name="executable-installation"></a>
+- [Byte Frequency Analysis](#bytes)
 
+## Instructions for Non-Technical Users <a name="nontech"></a>
+The application has a gui built for user convience with widgets that indicate each function performed by the program \
+There are 5 widgets that are shown by the program: \
+- Select a File: Allows the user to select a file that will be encrypted or decrypted.
+- Select a Key: Allows the user to select a file to act as a key to perform the encryption or decryption functions.
+- Custom Key:
+- Encrypt:
+- Decrypt:
+## Executable Installation <a name="executable-installation"></a>
+The windows executable is provided as Khan-Rubix Encryptor.exe. \
+Download that file or the project as zip.
 ## Project Usage <a name="project-usage"></a>
 
 ### Steps
