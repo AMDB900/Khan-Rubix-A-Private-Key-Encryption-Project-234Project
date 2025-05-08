@@ -10,19 +10,35 @@ Khan-Rubix is an executable utility that allows users to encrypt a file of up to
 
 ## Table of Contents
 - [Instructions for Non-Technical Users](#nontech)
+- [Additional Instructions for Moderately Technical Users](#modtech)
+- [Further Instructions for Highly Technical Users](#hightech)
 - [Executable Installation](#executable-installation)
 - [Project Usage](#project-usage)
 - [Modules](#modules)
 - [Byte Frequency Analysis](#bytes)
 
 ## Instructions for Non-Technical Users <a name="nontech"></a>
-The application has a gui built for user convience with widgets that indicate each function performed by the program \
-There are 5 widgets that are shown by the program: \
-- Select a File: Allows the user to select a file that will be encrypted or decrypted.
-- Select a Key: Allows the user to select a file to act as a key to perform the encryption or decryption functions.
-- Custom Key:
-- Encrypt:
-- Decrypt:
+The application has a gui built for user convience with widgets that indicate each function performed by the program. \
+There are 5 widgets that are shown by the program:
+- Select a File: Allows the user to select a file from their machine that will be encrypted or decrypted.
+- Select a Key: Allows the user to select a file from thier machineto act as a key to perform the encryption or decryption functions. Mutually exclusive with Custom Key.
+- Custom Key: Prompts the user to type in an input to act as a key for either function. Mutually exclusive with Select a Key.
+- Encrypt: After selecting a file and providing a key through either key widget, select this to perform an encryption. This will prompt the user to select a location on their PC and file name to save the file as a .khn encrypted file.
+- Decrypt: The user must have selected a .khn file as a file, and provided the correct key for this to function. Selecting this widget will prompt the user to provide a name for the decrypted file. The file will be generated in the same folder as the executable.
+
+### Steps for Encrypting a File
+1. Run the executable.
+2. Click the 'Select a File' widget and select the file you want to encrypt from your file explorer.
+3. Click either the 'Select a Key' or 'Custom Key' widget.
+4. If selecting 'Select a Key,' navigate the file explorer to find the key you want to use.
+5. If selecting 'Custom Key,' type the key you want into the prompt that will pop up.
+6. Click the 'Encrypt' widget. Navigate to where you want to store your file and provide a file name then press enter.
+
+### Steps for Decrypting a File
+
+## Additional Instructions for Moderately Technical Users <a name="modtech"></a>
+
+## Further Instructions for Highly Technical Users to Customize the Program.<a name="hightech"></a>
 ## Executable Installation <a name="executable-installation"></a>
 The windows executable is provided as Khan-Rubix Encryptor.exe. \
 Download that file or the project as zip.
