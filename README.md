@@ -66,7 +66,8 @@ The program only uses base python libraries so no installations other than pytho
 The instructions provided currently only work on Windows and was tested on Windows 10/11.
 ## Executable Installation <a name="executable-installation"></a>
 The windows executable is provided as Khan-Rubix Encryptor.exe. \
-Download that file or the project as zip.
+Download that file or the project as zip. \
+The executable only works on Windows and was tested using Windows 10/11. For Mac, please refer to [Project Usage](#project-usage)
 ## Project Usage <a name="project-usage"></a>
 
 ### Steps
@@ -93,7 +94,15 @@ cd path/to/the/project/root
 python3 main.py
 ```
 
-## Modules <a name="modules"></a>
+## Modules Used <a name="modules"></a>
+### main.py
+Main use for terminal execution. Performs encryption and decryption. \
+original file -> key padding -> xor -> huffman encoding -> fibonacci coding -> byte shifting -> encrypted file \
+encrypted file -> key padding -> byte shifting -> fibonacci decode -> huffman decode -> xor -> decrypted file \
+For a custom key, make a txt file with the string you want to use as a custom key.
+### app_gui.py
+Contains gui in the Khan-Rubix Encryptor.exe \
+Includes custom key function that uses entered string as a key.
 ### byte_frequency_analysis.py
 Analyzes the frequency of each byte in the input data and returns an array
     with the most frequent byte as the first element.
@@ -106,14 +115,13 @@ Analyzes the frequency of each byte in the input data and returns an array
         
 ### HuffmanEncoding.py
 Tools for Huffman Encoding.
+
 ### padding.py
 Tools for padding keys and input files. Keys will be padded to 1KB using a hash function 
 of the key to select where to start adding garbage data from pi digits. Padding will
 wrap around to the start of the pi digits. Files will be padded to 12MB with information
 about the length of the file, the filetype, and with random bytes from the original string.
 
-### Randomization.py
-Tools to generate random keys, patterns for shuffling, and huffman-encoded data.
 
 ### xor.py
 ```
@@ -127,9 +135,15 @@ def xor(text, key) -> bytes
 ### bytecube.py
 Main file for bytecube implementation. Includes tools for bytecube manipulation.
 
+### FibonacciCoding.py
+File containing fibonacci coding for data padding.
+
 ## List of Files
+
 ### main.py
-Main executable.
+Main file for terminal executable
+### app_gui.py
+Executable gui file.
 ### test_input
 Folder with testing files.
 * 1.docx - Word Document file. Includes text, tables, charts and images.
@@ -146,7 +160,6 @@ Folder for xor key integration and speed comparison.
 Folder with testing keys. They are the same as the test_input files.
 ### pi_10000_digits.txt
 Text file with the first ten-thousand digits of pi.
-### Screenshot 2025-02-20 160715
 ### xor.py
 ### HuffmanEncoding.py
 ### bytecube.py
@@ -154,4 +167,5 @@ Text file with the first ten-thousand digits of pi.
 ### padding.py
 ### byte_frequency_analysis.py
 ### Randomization.py
+### FibonacciEncoding.py
 ### README.md

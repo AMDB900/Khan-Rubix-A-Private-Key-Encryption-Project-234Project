@@ -5,6 +5,11 @@ fibonacciNum = [1,2]
 
 #get or calculate the nth fibonacci number
 def getFibonacciNum(n):
+	'''
+	returns the nth fibonacci number
+	Args: n: integer to get fibonacci number for
+	Returns: the nth fibonacci number
+	'''
 	while(len(fibonacciNum)<=n):
 		fibonacciNum.append(-1)
 	if(fibonacciNum[n]==-1):
@@ -13,6 +18,11 @@ def getFibonacciNum(n):
 
 #generate a fibonacci code for an interger n
 def getFibonacciCode(n):
+	'''
+	generates a fibonacci code for an integer n
+	Args: n: integer to be encoded
+	Returns: a string with the fibonacci code for n
+	'''
 	codeLength = 0;
 	#calculate the length of the code
 	#find the first fibonacci number greater than n
@@ -38,15 +48,26 @@ def getFibonacciCode(n):
 
 #calculate integer value from fibonacci code fibonacci
 def decodeFibonacciCode(f):
+	'''
+	decodes a fibonacci code into an integer
+	
+	Returns: integer value of fibonacci code
+	'''
 	assert(f[-2:]) == "11"
 	return sum([getFibonacciNum(i) for i in range(len(f)-1) if f[i]=="1"])
 
 #get the length of string s and prepend fibonacci code of length	
 def fibonacciEncodeLength(s):
+	'''
+	Returns: a string with the length of s encoded in fibonacci code
+	'''
 	return getFibonacciCode(len(s)) + s
 	
 #read fibonacci coded length from the start of string s and shorten the string to that length
 def fibonacciUnpad(s):
+	'''
+	Returns: a string with the length of s encoded in fibonacci code
+	'''
 	m = re.match(r'(0|10)*11', s)
 	return m.string[m.end(0):m.end(0)+decodeFibonacciCode(m[0])]
 	

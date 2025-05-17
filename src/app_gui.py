@@ -12,6 +12,12 @@ from FibonacciCoding import *
 
 class KhanApp:
     def __init__(self, root):
+        """
+        Initialize the main application window and set up variables and UI.
+        
+        Parameters:
+        - root (tk.Tk): The root Tkinter window.
+        """
         self.root = root
         self.root.title("Private-Key Encryption / Decryption Utility")
         self.root.geometry("700x500")
@@ -29,6 +35,9 @@ class KhanApp:
         self.build_ui()
 
     def build_ui(self):
+        """
+        Build the graphical user interface, including buttons and the log console.
+        """
         frame = tk.Frame(self.root, padx=10, pady=10)
         frame.pack(fill=tk.BOTH, expand=True)
 
@@ -48,6 +57,12 @@ class KhanApp:
         self.log_console.pack(fill=tk.BOTH, expand=True)
 
     def log(self, message):
+        """
+        Append a message to the log console and scroll to the bottom.
+        
+        Parameters:
+        - message (str): The message to log.
+        """
         self.log_console.config(state='normal')
         self.log_console.insert(tk.END, message + '\n')
         self.log_console.see(tk.END)
@@ -63,6 +78,9 @@ class KhanApp:
             self.log(f"Selected file: {self.input_file}")
 
     def select_key(self):
+        """
+        Open a file dialog to select a key file for encryption/decryption.
+        """
         self.key_file = filedialog.askopenfilename(
             title="Select private key",
             initialdir=os.getcwd()
@@ -70,6 +88,9 @@ class KhanApp:
         if self.key_file:
             self.log(f"Selected key: {self.key_file}")
     def custom_key(self):
+        """
+        Open a dialog to enter a custom key for encryption/decryption.
+        """
         def save_custom_key():
             key_text = entry.get()
             if not key_text:
@@ -96,6 +117,9 @@ class KhanApp:
         entry.pack(pady=5)
         tk.Button(popup, text="Submit", command=save_custom_key).pack(pady=5)
     def encrypt_ui(self):
+        """
+        Open a file dialog to select an output file for encryption and start the encryption process.
+        """
         if not self.input_file or not self.key_file:
             messagebox.showerror("Missing Input", "Please select both a file and a key.")
             return
@@ -113,6 +137,9 @@ class KhanApp:
         self.encrypt_file()
 
     def decrypt_ui(self):
+        """
+        Open a file dialog to select an output file for decryption and start the decryption process.
+        """
         if not self.input_file or not self.key_file:
             messagebox.showerror("Missing Input", "Please select both a file and a key.")
             return
@@ -124,6 +151,9 @@ class KhanApp:
         self.decrypt_file()
 
     def encrypt_file(self):
+        """
+        Encrypt the selected file using the provided key and save it to the specified output file.
+        """
         try:
             start = time.perf_counter()
             self.log("🔐 Starting encryption...")
@@ -211,6 +241,9 @@ class KhanApp:
             self.log(f"❌ Encryption error: {e}")
 
     def decrypt_file(self):
+        """
+        Decrypt the selected file using the provided key and save it to the specified output file.
+        """
         try:
             start = time.perf_counter()
             self.log("🔓 Starting decryption...")
@@ -286,6 +319,9 @@ class KhanApp:
             self.log(f"❌ Decryption error: {e}")
 
     def on_close(self):
+        """
+        Handle the window close event. Clean up and exit the application.
+        """
         if self.using_custom_key and os.path.exists("custom_key.key"):
             try:
                 os.remove("custom_key.key")
